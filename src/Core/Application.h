@@ -1,5 +1,11 @@
 #pragma once
 
+#include "Mesh.h"
+
+#include "Utility/Camera.h"
+
+inline Camera camera;
+
 class Application {
 
 public:
@@ -18,12 +24,17 @@ public:
 	// @param height is the new height of the screen
 	void SetScreenSize(const unsigned int width, const unsigned int height);
 
+	Camera& GetCameraReference() { return camera; };
 
 private:
 
 	struct GLFWwindow* window;
 
 	int WIDTH = 1920, HEIGHT = 1080;
+
+	Mesh* mesh;
+
+	
 
 };
 

@@ -34,6 +34,7 @@ include(FetchContent)
 
 set(GLEW_BUILD_DEMOS OFF CACHE BOOL "Disable GLEW demos" FORCE )
 set(glew-cmake_BUILD_SHARED OFF CACHE BOOL "Build the shared glew library" FORCE )
+set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 
 FetchContent_Declare(
     GLEW
@@ -41,12 +42,33 @@ FetchContent_Declare(
     GIT_TAG master # Change to the latest stable version
     )
 
-FetchContent_MakeAvailable(GLEW)
+    # Force GLEW to build in Release mode
+# Populate GLEW and set it to build only in Release mode
+FetchContent_GetProperties(GLEW)
+if (NOT glew_POPULATED)
+    FetchContent_Populate(GLEW)
+    
+    # Create a custom build directory for GLEW in Release mode
+    set(GLEW_RELEASE_BUILD_DIR ${glew_BINARY_DIR})
+    file(MAKE_DIRECTORY ${GLEW_RELEASE_BUILD_DIR})
+    
+    # Configure GLEW explicitly for Release
+    execute_process(COMMAND ${CMAKE_COMMAND} -S ${glew_SOURCE_DIR} -B ${GLEW_RELEASE_BUILD_DIR} -DCMAKE_BUILD_TYPE=Release)
+    
+    # Build GLEW in Release mode
+    execute_process(COMMAND ${CMAKE_COMMAND} --build ${GLEW_RELEASE_BUILD_DIR} --config Release)
+endif()
+
+add_library(GLEW_STATIC STATIC IMPORTED)
+set_target_properties(GLEW_STATIC PROPERTIES
+    IMPORTED_LOCATION ${GLEW_RELEASE_BUILD_DIR}/lib/Release/glew.lib
+    INTERFACE_INCLUDE_DIRECTORIES ${glew_SOURCE_DIR}/include
+)
+#FetchContent_MakeAvailable(GLEW)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLEW_STATIC)
 target_include_directories(${PROJECT_NAME} PRIVATE ${glew_SOURCE_DIR}/include/GL)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${glew_BINARY_DIR}/lib/Release/glew.lib)
-
     
 # GLFW
 
@@ -72,5 +94,36 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(GLM)
 target_link_libraries(${PROJECT_NAME} PRIVATE glm)
+
+
+file(GLOB SHADER_VERT_SOURCES "${CMAKE_SOURCE_DIR}/resources/shaders/*.vert")
+file(GLOB SHADER_FRAG_SOURCES "${CMAKE_SOURCE_DIR}/resources/shaders/*.frag")
+
+file(GLOB TEXTURE_SOURCES "${CMAKE_SOURCE_DIR}/resources/textures/spritesheet/*.png")
+
+
+#file(COPY ${SHADER_VERT_SOURCES} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders)
+#file(COPY ${SHADER_FRAG_SOURCES} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders)
+
+if(CMAKE_CONFIGURATION_TYPES) # Multi-config generator
+    # Multi-config generators (Visual Studio, Xcode)
+    foreach(config ${CMAKE_CONFIGURATION_TYPES})
+        string(TOUPPER ${config} CONFIG_UPPER)
+        file(COPY ${SHADER_VERT_SOURCES} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER}}/shaders)
+        file(COPY ${SHADER_FRAG_SOURCES} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER}}/shaders)
+
+        message(STATUS "Copying shaders and textures to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER}} for ${config} configuration.")
+    endforeach()
+else() # Single-config generator
+    # Single-config generators (Makefiles, Ninja)
+    file(COPY ${SHADER_VERT_SOURCES} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders)
+    file(COPY ${SHADER_FRAG_SOURCES} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders)
+    message(STATUS "Copying shaders to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders for ${CMAKE_BUILD_TYPE}.")
+endif()
+
+file(COPY ${SHADER_VERT_SOURCES} DESTINATION ${CMAKE_BINARY_DIR}/shaders)
+file(COPY ${SHADER_FRAG_SOURCES} DESTINATION ${CMAKE_BINARY_DIR}/shaders)
+
+
 
 

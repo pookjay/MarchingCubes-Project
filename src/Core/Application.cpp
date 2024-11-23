@@ -1,7 +1,9 @@
 #include "Application.h"
 #include <iostream>
 
+#include <glew.h>
 #include <GLFW/glfw3.h>
+
 
 Application::Application()
 {
@@ -35,7 +37,7 @@ Application::Application()
 
 	// Initialize GLEW
 
-	glfwInit();
+	glewInit();
 
 	// Set GLEW settings
 	glClearColor(0, 0.7, 0.9, 1.0f);
@@ -50,6 +52,8 @@ Application::Application()
 
 void Application::RunLoop()
 {
+	Mesh m;
+	mesh = &m;
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -62,6 +66,8 @@ void Application::RunLoop()
 
 void Application::Update()
 {
+	camera.UpdateCamera();
+	mesh->RenderMesh();
 }
 
 void Application::SetScreenSize(const unsigned int width, const unsigned int height)
@@ -69,7 +75,7 @@ void Application::SetScreenSize(const unsigned int width, const unsigned int hei
 	WIDTH = width;
 	HEIGHT = height;
 
-	//Utility::perspective = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 10000.0f);
+	Utility::perspective = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 10000.0f);
 	glViewport(0, 0, width, height);
 }
 
@@ -77,7 +83,7 @@ void MouseCallback(GLFWwindow* window, double xpos, double ypos)
 {
 	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
 
-	//game->GetPlayerReference()->GetCameraReference().mouse_callback(window, xpos, ypos);
+	app->GetCameraReference().MouseCallback(window, xpos, ypos);
 }
 
 void ResizeWindowCallback(GLFWwindow* window, int width, int height)
