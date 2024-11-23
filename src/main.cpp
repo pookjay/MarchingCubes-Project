@@ -1,6 +1,10 @@
-#include <iostream>
+#include <Core/Application.h>
 
 int main() 
 {
-    std::cout << "Hello World!" << std::endl;
+    // Initializes the game
+    Application app;
+
+    // Runs the game loop
+    app.RunLoop();
 }
