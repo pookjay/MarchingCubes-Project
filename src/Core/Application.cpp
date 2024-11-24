@@ -4,7 +4,6 @@
 #include <glew.h>
 #include <GLFW/glfw3.h>
 
-
 Application::Application()
 {
 	// Initialize GLFW
@@ -44,9 +43,9 @@ Application::Application()
 	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, WIDTH, HEIGHT);
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK);
+	//glFrontFace(GL_CCW);
 
 }
 
@@ -54,11 +53,15 @@ void Application::RunLoop()
 {
 	Mesh m;
 	mesh = &m;
+
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		Update();
+
+		glfwPollEvents();
+		ProcessInput();
 
 		glfwSwapBuffers(window);
 	}
@@ -68,6 +71,41 @@ void Application::Update()
 {
 	camera.UpdateCamera();
 	mesh->RenderMesh();
+}
+
+void Application::ProcessInput()
+{
+	float CameraSpeed = 0.05f;
+
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(window, true);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+	{
+		camera.cameraPosition.y += CameraSpeed;
+	}
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+	{
+		camera.cameraPosition.y -= CameraSpeed;
+	}
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		camera.cameraPosition += CameraSpeed * camera.cameraForwardVector;
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		camera.cameraPosition -= CameraSpeed * camera.cameraForwardVector;
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		camera.cameraPosition -= CameraSpeed * glm::cross(camera.cameraForwardVector, camera.cameraUpVector);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		camera.cameraPosition += CameraSpeed * glm::cross(camera.cameraForwardVector, camera.cameraUpVector);
+	}
 }
 
 void Application::SetScreenSize(const unsigned int width, const unsigned int height)

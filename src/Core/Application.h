@@ -19,6 +19,9 @@ public:
 	// Updates the game state every frame
 	void Update();
 
+	// Processes the input
+	void ProcessInput();
+
 	// @brief Sets the screen size
 	// @param width is the new width of the screen
 	// @param height is the new height of the screen
