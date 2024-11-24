@@ -1,12 +1,14 @@
 #include "MarchingCubes.h"
 
-int CalculateCubeIndex(GridCell cube)
+#include <iostream>
+
+int CalculateCubeIndex(GridPoint cube[8])
 {
 	int cubeIndex = 0;
 
 	for (int i = 0; i < 8; ++i)
 	{
-		if (cube.val[i] < 0.5f) {
+		if (cube[i].val < 0.5f) {
 			cubeIndex |= 1 << i;
 		}
 	}
@@ -14,7 +16,7 @@ int CalculateCubeIndex(GridCell cube)
 	return cubeIndex;
 }
 
-void EdgeIntersection(int cubeIndex, GridCell& cell, Vec3 vertexList[12])
+void EdgeIntersection(int cubeIndex, GridPoint cell[8], Vec3 vertexList[12])
 {
 	double isoLevel = 0.5f;
 
@@ -22,40 +24,29 @@ void EdgeIntersection(int cubeIndex, GridCell& cell, Vec3 vertexList[12])
 		return;
 
 	if (edgeTable[cubeIndex] & 1)
-		vertexList[0] = VertexInterp(isoLevel, cell.pos[0], cell.pos[1], cell.val[0], cell.val[1]);
+		vertexList[0] = VertexInterp(isoLevel, cell[0].pos, cell[1].pos, cell[0].val, cell[1].val);
 	if (edgeTable[cubeIndex] & 2)
-		vertexList[1] =
-		VertexInterp(isoLevel, cell.pos[1], cell.pos[2], cell.val[1], cell.val[2]);
+		vertexList[1] = VertexInterp(isoLevel, cell[1].pos, cell[2].pos, cell[1].val, cell[2].val);
 	if (edgeTable[cubeIndex] & 4)
-		vertexList[2] =
-		VertexInterp(isoLevel, cell.pos[2], cell.pos[3], cell.val[2], cell.val[3]);
+		vertexList[2] = VertexInterp(isoLevel, cell[2].pos, cell[3].pos, cell[2].val, cell[3].val);
 	if (edgeTable[cubeIndex] & 8)
-		vertexList[3] =
-		VertexInterp(isoLevel, cell.pos[3], cell.pos[0], cell.val[3], cell.val[0]);
+		vertexList[3] = VertexInterp(isoLevel, cell[3].pos, cell[0].pos, cell[3].val, cell[0].val);
 	if (edgeTable[cubeIndex] & 16)
-		vertexList[4] =
-		VertexInterp(isoLevel, cell.pos[4], cell.pos[5], cell.val[4], cell.val[5]);
+		vertexList[4] = VertexInterp(isoLevel, cell[4].pos, cell[5].pos, cell[4].val, cell[5].val);
 	if (edgeTable[cubeIndex] & 32)
-		vertexList[5] =
-		VertexInterp(isoLevel, cell.pos[5], cell.pos[6], cell.val[5], cell.val[6]);
+		vertexList[5] = VertexInterp(isoLevel, cell[5].pos, cell[6].pos, cell[5].val, cell[6].val);
 	if (edgeTable[cubeIndex] & 64)
-		vertexList[6] =
-		VertexInterp(isoLevel, cell.pos[6], cell.pos[7], cell.val[6], cell.val[7]);
+		vertexList[6] = VertexInterp(isoLevel, cell[6].pos, cell[7].pos, cell[6].val, cell[7].val);
 	if (edgeTable[cubeIndex] & 128)
-		vertexList[7] =
-		VertexInterp(isoLevel, cell.pos[7], cell.pos[4], cell.val[7], cell.val[4]);
+		vertexList[7] = VertexInterp(isoLevel, cell[7].pos, cell[4].pos, cell[7].val, cell[4].val);
 	if (edgeTable[cubeIndex] & 256)
-		vertexList[8] =
-		VertexInterp(isoLevel, cell.pos[0], cell.pos[4], cell.val[0], cell.val[4]);
+		vertexList[8] = VertexInterp(isoLevel, cell[0].pos, cell[4].pos, cell[0].val, cell[4].val);
 	if (edgeTable[cubeIndex] & 512)
-		vertexList[9] =
-		VertexInterp(isoLevel, cell.pos[1], cell.pos[5], cell.val[1], cell.val[5]);
+		vertexList[9] = VertexInterp(isoLevel, cell[1].pos, cell[5].pos, cell[1].val, cell[5].val);
 	if (edgeTable[cubeIndex] & 1024)
-		vertexList[10] =
-		VertexInterp(isoLevel, cell.pos[2], cell.pos[6], cell.val[2], cell.val[6]);
+		vertexList[10] = VertexInterp(isoLevel, cell[2].pos, cell[6].pos, cell[2].val, cell[6].val);
 	if (edgeTable[cubeIndex] & 2048)
-		vertexList[11] =
-		VertexInterp(isoLevel, cell.pos[3], cell.pos[7], cell.val[3], cell.val[7]);
+		vertexList[11] = VertexInterp(isoLevel, cell[3].pos, cell[7].pos, cell[3].val, cell[7].val);
 }
 
 Vec3 VertexInterp(double isolevel, Vec3 p1, Vec3 p2, double valp1, double valp2)
@@ -75,6 +66,29 @@ Vec3 VertexInterp(double isolevel, Vec3 p1, Vec3 p2, double valp1, double valp2)
 	p.z = p1.z + mu * (p2.z - p1.z);
 
 	return(p);
+}
+
+void MarchCube(GridPoint cube[8], std::vector<float>& vertices)
+{
+	int cubeIndex = CalculateCubeIndex(cube);
+
+	Vec3 vertexList[12];
+
+	EdgeIntersection(cubeIndex, cube, vertexList);
+
+	for (int i = 0; triTable[cubeIndex][i] != -1; i += 3) {
+		vertices.push_back(vertexList[triTable[cubeIndex][i]].x);
+		vertices.push_back(vertexList[triTable[cubeIndex][i]].y);
+		vertices.push_back(vertexList[triTable[cubeIndex][i]].z);
+
+		vertices.push_back(vertexList[triTable[cubeIndex][i + 1]].x);
+		vertices.push_back(vertexList[triTable[cubeIndex][i + 1]].y);
+		vertices.push_back(vertexList[triTable[cubeIndex][i + 1]].z);
+
+		vertices.push_back(vertexList[triTable[cubeIndex][i + 2]].x);
+		vertices.push_back(vertexList[triTable[cubeIndex][i + 2]].y);
+		vertices.push_back(vertexList[triTable[cubeIndex][i + 2]].z);
+	}
 }
 
 int edgeTable[256] = {

@@ -1,32 +1,35 @@
 #pragma once
+#include "Mesh.h"
 
 struct Vec3 {
 	float x,y,z;
 };
 
-struct GridCell {
-	Vec3 pos[8] = { 
-		{0, 0, 0}, 
-		{1, 0, 0},
-		{1, 1, 0}, 
-		{0, 1, 0}, 
-		{0, 0, 1}, 
-		{1, 0, 1}, 
-		{1, 1, 1}, 
-		{0, 1, 1}  
-	};
-	double val[8];
-
-	GridCell() {
-		for (int i = 0; i < 8; ++i) {
-			val[i] = 1.0f;
-		}
-	}
+struct GridPoint {
+	Vec3 pos;
+	double val;
 };
 
 class World {
 
-	
+public:
+	World();
+
+	void GenerateWorld();
+
+	void RenderWorld();
+
+private:
+
+	// Grid 
+	static const int gridSize = 32;
+
+	GridPoint grid[gridSize*gridSize*gridSize];
+
+	// Mesh
+	Mesh mesh;
 
 };
 
+
+inline int GetIndex(int x, int y, int z, int gridSize);

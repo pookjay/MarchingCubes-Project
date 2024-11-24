@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Mesh.h"
-
 #include "Utility/Camera.h"
 
 inline Camera camera;
@@ -34,11 +32,6 @@ private:
 	struct GLFWwindow* window;
 
 	int WIDTH = 1920, HEIGHT = 1080;
-
-	Mesh* mesh;
-
-	
-
 };
 
 void MouseCallback(GLFWwindow* window, double xpos, double ypos);

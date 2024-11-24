@@ -1,6 +1,5 @@
 #include "Mesh.h"
 
-#include <vector>
 #include <iostream>
 
 #include <glew.h>
@@ -9,6 +8,7 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #include "Core/Application.h"
+#include "Core/World.h"
 #include "Core/MarchingCubes.h"
 
 
@@ -28,52 +28,27 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &EBO);
 }
 
-void Mesh::ConstructMesh()
+void Mesh::ConstructMesh(GridPoint grid[], int gridSize)
 {
-}
+	for (int x = 0; x < gridSize - 1; ++x) {
+		for (int y = 0; y < gridSize - 1; ++y) {
+			for (int z = 0; z < gridSize - 1; ++z) {
+				GridPoint cube[8];
+				cube[0] = grid[GetIndex(x, y, z, gridSize)];
+				cube[1] = grid[GetIndex(x + 1, y, z, gridSize)];
+				cube[2] = grid[GetIndex(x + 1, y, z + 1, gridSize)];
+				cube[3] = grid[GetIndex(x, y, z + 1, gridSize)];
+				cube[4] = grid[GetIndex(x, y + 1, z, gridSize)];
+				cube[5] = grid[GetIndex(x + 1, y + 1, z, gridSize)];
+				cube[6] = grid[GetIndex(x + 1, y + 1, z + 1, gridSize)];
+				cube[7] = grid[GetIndex(x, y + 1, z + 1, gridSize)];
 
-void Mesh::RenderMesh()
-{
-	GridCell cell;
-	for (int i = 0; i < 8; ++i)
-	{
-		//cell.val[i] = 1.0f;
+				MarchCube(cube, vertices);
+			}
+		}
 	}
 
-	cell.val[0] = 0.0f;
-	cell.val[3] = 0.0f;
-	cell.val[7] = 0.0f;
-
-	int cubeIndex = CalculateCubeIndex(cell);
-	//std::cout << cubeIndex << std::endl;
-	//std::cout << edgeTable[cubeIndex] << std::endl;
-
-	Vec3 vertexList[12];
-
-	EdgeIntersection(cubeIndex, cell, vertexList);
-
-	for (int i = 0; i < 12; ++i)
-	{
-		//std::cout << vertexList[i].x << ", " << vertexList[i].y << ", " << vertexList[i].z << std::endl;
-	}
-
-	std::vector<float> vertices;
-
-	//std::cout << vertexList[triTable[cubeIndex][0]].x << ", " << vertexList[triTable[cubeIndex][0]].y << ", " << vertexList[triTable[cubeIndex][0]].z << std::endl;
-
-	for (int i = 0; triTable[cubeIndex][i] != -1; i += 3) {
-		vertices.push_back(vertexList[triTable[cubeIndex][i    ]].x);
-		vertices.push_back(vertexList[triTable[cubeIndex][i    ]].y);
-		vertices.push_back(vertexList[triTable[cubeIndex][i	   ]].z);
-
-		vertices.push_back(vertexList[triTable[cubeIndex][i + 1]].x);
-		vertices.push_back(vertexList[triTable[cubeIndex][i + 1]].y);
-		vertices.push_back(vertexList[triTable[cubeIndex][i + 1]].z);
-
-		vertices.push_back(vertexList[triTable[cubeIndex][i + 2]].x);
-		vertices.push_back(vertexList[triTable[cubeIndex][i + 2]].y);
-		vertices.push_back(vertexList[triTable[cubeIndex][i + 2]].z);
-	}
+	std::cout << vertices.size();
 
 	glBindVertexArray(VAO);
 
@@ -85,6 +60,14 @@ void Mesh::RenderMesh()
 
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+	glBindVertexArray(0);
+
+}
+
+void Mesh::RenderMesh()
+{
+	glBindVertexArray(VAO);
 
 	MeshShader.Bind();
 

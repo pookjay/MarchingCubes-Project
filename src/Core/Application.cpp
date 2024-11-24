@@ -4,6 +4,8 @@
 #include <glew.h>
 #include <GLFW/glfw3.h>
 
+#include "Core/World.h"
+
 Application::Application()
 {
 	// Initialize GLFW
@@ -43,22 +45,24 @@ Application::Application()
 	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, WIDTH, HEIGHT);
 
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
-	//glFrontFace(GL_CCW);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 
 }
 
 void Application::RunLoop()
 {
-	Mesh m;
-	mesh = &m;
+
+	World world;
 
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		Update();
+
+		world.RenderWorld();
 
 		glfwPollEvents();
 		ProcessInput();
@@ -70,7 +74,7 @@ void Application::RunLoop()
 void Application::Update()
 {
 	camera.UpdateCamera();
-	mesh->RenderMesh();
+
 }
 
 void Application::ProcessInput()
