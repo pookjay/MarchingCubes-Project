@@ -1,12 +1,10 @@
 #pragma once
 #include "Mesh.h"
 
-struct Vec3 {
-	float x,y,z;
-};
+#include <glm/glm.hpp>
 
 struct GridPoint {
-	Vec3 pos;
+	glm::vec3 pos;
 	double val;
 };
 
@@ -33,3 +31,5 @@ private:
 
 
 inline int GetIndex(int x, int y, int z, int gridSize);
+
+float sdSphere(glm::vec3 pos, float radius);

@@ -16,7 +16,7 @@ int CalculateCubeIndex(GridPoint cube[8])
 	return cubeIndex;
 }
 
-void EdgeIntersection(int cubeIndex, GridPoint cell[8], Vec3 vertexList[12])
+void EdgeIntersection(int cubeIndex, GridPoint cell[8], glm::vec3 vertexList[12])
 {
 	double isoLevel = 0.5f;
 
@@ -49,10 +49,10 @@ void EdgeIntersection(int cubeIndex, GridPoint cell[8], Vec3 vertexList[12])
 		vertexList[11] = VertexInterp(isoLevel, cell[3].pos, cell[7].pos, cell[3].val, cell[7].val);
 }
 
-Vec3 VertexInterp(double isolevel, Vec3 p1, Vec3 p2, double valp1, double valp2)
+glm::vec3 VertexInterp(double isolevel, glm::vec3 p1, glm::vec3 p2, double valp1, double valp2)
 {
 	double mu;
-	Vec3 p;
+	glm::vec3 p;
 
 	if (abs(isolevel - valp1) < 0.00001)
 		return(p1);
@@ -72,7 +72,7 @@ void MarchCube(GridPoint cube[8], std::vector<float>& vertices)
 {
 	int cubeIndex = CalculateCubeIndex(cube);
 
-	Vec3 vertexList[12];
+	glm::vec3 vertexList[12];
 
 	EdgeIntersection(cubeIndex, cube, vertexList);
 
