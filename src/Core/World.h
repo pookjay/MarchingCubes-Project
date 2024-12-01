@@ -20,7 +20,7 @@ public:
 private:
 
 	// Grid 
-	static const int gridSize = 32;
+	static const int gridSize = 128;
 
 	GridPoint grid[gridSize*gridSize*gridSize];
 
@@ -32,4 +32,5 @@ private:
 
 inline int GetIndex(int x, int y, int z, int gridSize);
 
+float sdBox(glm::vec3 p, glm::vec3 b);
 float sdSphere(glm::vec3 pos, float radius);

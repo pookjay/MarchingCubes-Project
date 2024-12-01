@@ -54,7 +54,7 @@ Application::Application()
 void Application::RunLoop()
 {
 
-	World world;
+	World* world = new World();
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -62,7 +62,7 @@ void Application::RunLoop()
 
 		Update();
 
-		world.RenderWorld();
+		world->RenderWorld();
 
 		glfwPollEvents();
 		ProcessInput();

@@ -77,9 +77,9 @@ void MarchCube(GridPoint cube[8], std::vector<float>& vertices)
 	EdgeIntersection(cubeIndex, cube, vertexList);
 
 	for (int i = 0; triTable[cubeIndex][i] != -1; i += 3) {
-		vertices.push_back(vertexList[triTable[cubeIndex][i]].x);
-		vertices.push_back(vertexList[triTable[cubeIndex][i]].y);
-		vertices.push_back(vertexList[triTable[cubeIndex][i]].z);
+		vertices.push_back(vertexList[triTable[cubeIndex][i    ]].x);
+		vertices.push_back(vertexList[triTable[cubeIndex][i    ]].y);
+		vertices.push_back(vertexList[triTable[cubeIndex][i	   ]].z);
 
 		vertices.push_back(vertexList[triTable[cubeIndex][i + 1]].x);
 		vertices.push_back(vertexList[triTable[cubeIndex][i + 1]].y);
