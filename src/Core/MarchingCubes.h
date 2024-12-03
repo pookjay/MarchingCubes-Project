@@ -17,8 +17,9 @@ glm::vec3 VertexInterp(double isolevel, glm::vec3 p1, glm::vec3 p2, double valp1
 //@brief Builds vertices for the cube
 //@param cube is the 8 points needed to march the cube
 //@param vertices vector is where the triangle points will be placed
-void MarchCube(GridPoint cube[8], std::vector<float>& vertices);
+void MarchCube(GridPoint cube[8], std::vector<float>& vertices, std::vector<float>& normals);
 
+void ComputeMeshNormals(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, std::vector<float>& normals);
 
 extern int edgeTable[256];
 

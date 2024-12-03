@@ -2,7 +2,10 @@
 
 #include <vector>
 
+#include "glm/glm.hpp"
+
 #include "Utility/Shader.h"
+
 
 class Mesh {
 
@@ -14,9 +17,11 @@ public:
 
 	void RenderMesh();
 
+
 private:
-	unsigned int VAO, VBO, EBO;
+	unsigned int VAO, position_VBO, normal_VBO, EBO;
 	std::vector<float> vertices;
+	std::vector<float> normals;
 
 	Utility::Shader MeshShader;
 };

@@ -68,7 +68,7 @@ glm::vec3 VertexInterp(double isolevel, glm::vec3 p1, glm::vec3 p2, double valp1
 	return(p);
 }
 
-void MarchCube(GridPoint cube[8], std::vector<float>& vertices)
+void MarchCube(GridPoint cube[8], std::vector<float>& vertices, std::vector<float>& normals)
 {
 	int cubeIndex = CalculateCubeIndex(cube);
 
@@ -77,18 +77,41 @@ void MarchCube(GridPoint cube[8], std::vector<float>& vertices)
 	EdgeIntersection(cubeIndex, cube, vertexList);
 
 	for (int i = 0; triTable[cubeIndex][i] != -1; i += 3) {
-		vertices.push_back(vertexList[triTable[cubeIndex][i    ]].x);
-		vertices.push_back(vertexList[triTable[cubeIndex][i    ]].y);
-		vertices.push_back(vertexList[triTable[cubeIndex][i	   ]].z);
 
-		vertices.push_back(vertexList[triTable[cubeIndex][i + 1]].x);
-		vertices.push_back(vertexList[triTable[cubeIndex][i + 1]].y);
-		vertices.push_back(vertexList[triTable[cubeIndex][i + 1]].z);
+		glm::vec3 v1 = glm::vec3(vertexList[triTable[cubeIndex][i]].x, vertexList[triTable[cubeIndex][i]].y, vertexList[triTable[cubeIndex][i]].z);
+		glm::vec3 v2 = glm::vec3(vertexList[triTable[cubeIndex][i + 1]].x, vertexList[triTable[cubeIndex][i + 1]].y, vertexList[triTable[cubeIndex][i + 1]].z);
+		glm::vec3 v3 = glm::vec3(vertexList[triTable[cubeIndex][i + 2]].x, vertexList[triTable[cubeIndex][i + 2]].y, vertexList[triTable[cubeIndex][i + 2]].z);
 
-		vertices.push_back(vertexList[triTable[cubeIndex][i + 2]].x);
-		vertices.push_back(vertexList[triTable[cubeIndex][i + 2]].y);
-		vertices.push_back(vertexList[triTable[cubeIndex][i + 2]].z);
+		vertices.push_back(v1.x);
+		vertices.push_back(v1.y);
+		vertices.push_back(v1.z);
+
+		ComputeMeshNormals(v1, v2, v3, normals);
+
+		vertices.push_back(v2.x);
+		vertices.push_back(v2.y);
+		vertices.push_back(v2.z);
+
+		ComputeMeshNormals(v1, v2, v3, normals);
+
+		vertices.push_back(v3.x);
+		vertices.push_back(v3.y);
+		vertices.push_back(v3.z);
+
+		ComputeMeshNormals(v1, v2, v3, normals);
+		
 	}
+}
+
+void ComputeMeshNormals(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, std::vector<float>& normals)
+{
+	glm::vec3 edge1 = v2 - v1;
+	glm::vec3 edge2 = v3 - v1;
+
+	glm::vec3 normal = glm::cross(edge1, edge2);
+	normals.push_back(normal.x);
+	normals.push_back(normal.y);
+	normals.push_back(normal.z);
 }
 
 int edgeTable[256] = {

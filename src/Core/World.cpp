@@ -17,7 +17,7 @@ void World::GenerateWorld()
 	FastNoiseLite noise;
 	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
 	noise.SetFrequency(0.03f);
-	noise.SetFractalOctaves(5.0f);
+	noise.SetFractalOctaves(2.0f);
 	noise.SetFractalLacunarity(2.0f);
 	noise.SetFractalGain(0.5f);
 	noise.SetFractalType(FastNoiseLite::FractalType_FBm);
@@ -31,9 +31,7 @@ void World::GenerateWorld()
 				//point.val = sdSphere(point.pos - glm::vec3(16, 16, 16), 5.0f);
 				//point.val = sdBox(point.pos - glm::vec3(16, 16, 16), glm::vec3(5.0));
 
-				//VoxelData.Density = Position.Z - Height;
-
-				float noiseHeight = noise.GetNoise(float(x), float(y), float(z)) * 25.0f + 5.0f;
+				float noiseHeight = noise.GetNoise(float(x), float(y), float(z)) * 20.0f + 5.0f;
 
 				//std::cout << y - noiseHeight << std::endl;
 				if (y > noiseHeight) {
