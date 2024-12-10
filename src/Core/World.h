@@ -6,6 +6,7 @@
 struct GridPoint {
 	glm::vec3 pos;
 	double val;
+	int type = 0;
 };
 
 class World {
@@ -14,6 +15,8 @@ public:
 	World();
 
 	void GenerateWorld();
+
+	void RegenerateMesh();
 
 	void RenderWorld();
 

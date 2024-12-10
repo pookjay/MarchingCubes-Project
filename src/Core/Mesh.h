@@ -23,5 +23,10 @@ private:
 	std::vector<float> vertices;
 	std::vector<float> normals;
 
+	int vertexSize = 0;
+
 	Utility::Shader MeshShader;
 };
+
+
+extern int GetIndex(int x, int y, int z, int gridSize);

@@ -17,7 +17,7 @@ void World::GenerateWorld()
 	FastNoiseLite noise;
 	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
 	noise.SetFrequency(0.03f);
-	noise.SetFractalOctaves(2.0f);
+	noise.SetFractalOctaves(5.0f);
 	noise.SetFractalLacunarity(2.0f);
 	noise.SetFractalGain(0.5f);
 	noise.SetFractalType(FastNoiseLite::FractalType_FBm);
@@ -42,6 +42,10 @@ void World::GenerateWorld()
 					point.val = 0.0f;
 				}
 
+				if (y < 2) {
+					point.type = 1;
+				}
+
 				//if(point.val < 0.5)
 					//std::cout << sdSphere(point.pos - glm::vec3(16,16,t), 1.0f) << std::endl;
 
@@ -50,6 +54,11 @@ void World::GenerateWorld()
 		}
 
 	}
+}
+
+void World::RegenerateMesh()
+{
+	mesh.ConstructMesh(grid, gridSize);
 }
 
 void World::RenderWorld()

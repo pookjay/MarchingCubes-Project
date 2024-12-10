@@ -85,18 +85,21 @@ void MarchCube(GridPoint cube[8], std::vector<float>& vertices, std::vector<floa
 		vertices.push_back(v1.x);
 		vertices.push_back(v1.y);
 		vertices.push_back(v1.z);
+		vertices.push_back(float(cube[0].type));
 
 		ComputeMeshNormals(v1, v2, v3, normals);
 
 		vertices.push_back(v2.x);
 		vertices.push_back(v2.y);
 		vertices.push_back(v2.z);
+		vertices.push_back(float(cube[0].type));
 
 		ComputeMeshNormals(v1, v2, v3, normals);
 
 		vertices.push_back(v3.x);
 		vertices.push_back(v3.y);
 		vertices.push_back(v3.z);
+		vertices.push_back(float(cube[0].type));
 
 		ComputeMeshNormals(v1, v2, v3, normals);
 		

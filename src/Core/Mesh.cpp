@@ -32,6 +32,8 @@ Mesh::~Mesh()
 
 void Mesh::ConstructMesh(GridPoint grid[], int gridSize)
 {
+	vertexSize = 0;
+
 	for (int x = 0; x < gridSize - 1; ++x) {
 		for (int y = 0; y < gridSize - 1; ++y) {
 			for (int z = 0; z < gridSize - 1; ++z) {
@@ -50,7 +52,8 @@ void Mesh::ConstructMesh(GridPoint grid[], int gridSize)
 		}
 	}
 
-	std::cout << vertices.size() << ", " << normals.size() << std::endl;
+	//std::cout << vertices.size() << ", " << normals.size() << std::endl;
+	vertexSize = vertices.size();
 
 	glBindVertexArray(VAO);
 
@@ -58,19 +61,24 @@ void Mesh::ConstructMesh(GridPoint grid[], int gridSize)
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, normal_VBO);
-	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
 
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(3 * sizeof(float)));
+
+	glBindBuffer(GL_ARRAY_BUFFER, normal_VBO);
+	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
 
+	vertices.clear();
+	normals.clear();
 }
 
 void Mesh::RenderMesh()
@@ -86,7 +94,7 @@ void Mesh::RenderMesh()
 	glUniformMatrix4fv(glGetUniformLocation(MeshShader.GetID(), "viewMatrix"), 1, GL_FALSE, glm::value_ptr(camera.viewSpace));
 	glUniformMatrix4fv(glGetUniformLocation(MeshShader.GetID(), "perspectiveMatrix"), 1, GL_FALSE, glm::value_ptr(Utility::perspective));
 
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 3);
+	glDrawArrays(GL_TRIANGLES, 0, vertexSize / 3);
 
 	glBindVertexArray(0);
 }
