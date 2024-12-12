@@ -9,7 +9,7 @@
 
 int CalculateCubeIndex(GridPoint cube[8]);
 
-void EdgeIntersection(int cubeIndex, GridPoint cell[8], glm::vec3 vertexList[12]);
+void EdgeIntersection(int cubeIndex, GridPoint cell[8], glm::vec3 vertexList[12], glm::vec3 typeList[12]);
 
 // Linearly interpolates
 glm::vec3 VertexInterp(double isolevel, glm::vec3 p1, glm::vec3 p2, double valp1, double valp2);

@@ -63,6 +63,10 @@ void Application::RunLoop()
 		Update();
 
 		world->RenderWorld();
+		if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+		{
+			world->mesh.lightPos = camera.cameraPosition;
+		}
 
 		glfwPollEvents();
 		ProcessInput();

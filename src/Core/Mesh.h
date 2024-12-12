@@ -17,6 +17,7 @@ public:
 
 	void RenderMesh();
 
+	glm::vec3 lightPos = glm::vec3(0, 0, 0);
 
 private:
 	unsigned int VAO, position_VBO, normal_VBO, EBO;
@@ -26,6 +27,7 @@ private:
 	int vertexSize = 0;
 
 	Utility::Shader MeshShader;
+
 };
 
 

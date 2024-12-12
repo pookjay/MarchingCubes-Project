@@ -16,37 +16,61 @@ int CalculateCubeIndex(GridPoint cube[8])
 	return cubeIndex;
 }
 
-void EdgeIntersection(int cubeIndex, GridPoint cell[8], glm::vec3 vertexList[12])
+void EdgeIntersection(int cubeIndex, GridPoint cell[8], glm::vec3 vertexList[12], glm::vec3 typeList[12])
 {
 	double isoLevel = 0.5f;
 
 	if (edgeTable[cubeIndex] == 0)
 		return;
 
-	if (edgeTable[cubeIndex] & 1)
+	if (edgeTable[cubeIndex] & 1) {
 		vertexList[0] = VertexInterp(isoLevel, cell[0].pos, cell[1].pos, cell[0].val, cell[1].val);
-	if (edgeTable[cubeIndex] & 2)
+		typeList[0] = cell[0].color;
+	}
+	if (edgeTable[cubeIndex] & 2) {
 		vertexList[1] = VertexInterp(isoLevel, cell[1].pos, cell[2].pos, cell[1].val, cell[2].val);
-	if (edgeTable[cubeIndex] & 4)
+		typeList[1] = cell[1].color;
+	}
+	if (edgeTable[cubeIndex] & 4) {
 		vertexList[2] = VertexInterp(isoLevel, cell[2].pos, cell[3].pos, cell[2].val, cell[3].val);
-	if (edgeTable[cubeIndex] & 8)
+		typeList[2] = cell[2].color;
+	}
+	if (edgeTable[cubeIndex] & 8) {
 		vertexList[3] = VertexInterp(isoLevel, cell[3].pos, cell[0].pos, cell[3].val, cell[0].val);
-	if (edgeTable[cubeIndex] & 16)
+		typeList[3] = cell[3].color;
+	}
+	if (edgeTable[cubeIndex] & 16) {
 		vertexList[4] = VertexInterp(isoLevel, cell[4].pos, cell[5].pos, cell[4].val, cell[5].val);
-	if (edgeTable[cubeIndex] & 32)
+		typeList[4] = cell[4].color;
+	}
+	if (edgeTable[cubeIndex] & 32) {
 		vertexList[5] = VertexInterp(isoLevel, cell[5].pos, cell[6].pos, cell[5].val, cell[6].val);
-	if (edgeTable[cubeIndex] & 64)
+		typeList[5] = cell[5].color;
+	}
+	if (edgeTable[cubeIndex] & 64) {
 		vertexList[6] = VertexInterp(isoLevel, cell[6].pos, cell[7].pos, cell[6].val, cell[7].val);
-	if (edgeTable[cubeIndex] & 128)
+		typeList[6] = cell[6].color;
+	}
+	if (edgeTable[cubeIndex] & 128) {
 		vertexList[7] = VertexInterp(isoLevel, cell[7].pos, cell[4].pos, cell[7].val, cell[4].val);
-	if (edgeTable[cubeIndex] & 256)
+		typeList[7] = cell[7].color;
+	}
+	if (edgeTable[cubeIndex] & 256) {
 		vertexList[8] = VertexInterp(isoLevel, cell[0].pos, cell[4].pos, cell[0].val, cell[4].val);
-	if (edgeTable[cubeIndex] & 512)
+		typeList[8] = cell[0].color;
+	}
+	if (edgeTable[cubeIndex] & 512) {
 		vertexList[9] = VertexInterp(isoLevel, cell[1].pos, cell[5].pos, cell[1].val, cell[5].val);
-	if (edgeTable[cubeIndex] & 1024)
+		typeList[9] = cell[1].color;
+	}
+	if (edgeTable[cubeIndex] & 1024) {
 		vertexList[10] = VertexInterp(isoLevel, cell[2].pos, cell[6].pos, cell[2].val, cell[6].val);
-	if (edgeTable[cubeIndex] & 2048)
+		typeList[10] = cell[2].color;
+	}
+	if (edgeTable[cubeIndex] & 2048) {
 		vertexList[11] = VertexInterp(isoLevel, cell[3].pos, cell[7].pos, cell[3].val, cell[7].val);
+		typeList[11] = cell[3].color;
+	}
 }
 
 glm::vec3 VertexInterp(double isolevel, glm::vec3 p1, glm::vec3 p2, double valp1, double valp2)
@@ -73,8 +97,9 @@ void MarchCube(GridPoint cube[8], std::vector<float>& vertices, std::vector<floa
 	int cubeIndex = CalculateCubeIndex(cube);
 
 	glm::vec3 vertexList[12];
+	glm::vec3 typeList[12];
 
-	EdgeIntersection(cubeIndex, cube, vertexList);
+	EdgeIntersection(cubeIndex, cube, vertexList, typeList);
 
 	for (int i = 0; triTable[cubeIndex][i] != -1; i += 3) {
 
@@ -82,24 +107,37 @@ void MarchCube(GridPoint cube[8], std::vector<float>& vertices, std::vector<floa
 		glm::vec3 v2 = glm::vec3(vertexList[triTable[cubeIndex][i + 1]].x, vertexList[triTable[cubeIndex][i + 1]].y, vertexList[triTable[cubeIndex][i + 1]].z);
 		glm::vec3 v3 = glm::vec3(vertexList[triTable[cubeIndex][i + 2]].x, vertexList[triTable[cubeIndex][i + 2]].y, vertexList[triTable[cubeIndex][i + 2]].z);
 
+		glm::vec3 c1 = glm::vec3(typeList[triTable[cubeIndex][i]].x, typeList[triTable[cubeIndex][i]].y, typeList[triTable[cubeIndex][i]].z);
+		glm::vec3 c2 = glm::vec3(typeList[triTable[cubeIndex][i + 1]].x, typeList[triTable[cubeIndex][i + 1]].y, typeList[triTable[cubeIndex][i + 1]].z);
+		glm::vec3 c3 = glm::vec3(typeList[triTable[cubeIndex][i + 2]].x, typeList[triTable[cubeIndex][i + 2]].y, typeList[triTable[cubeIndex][i + 2]].z);
+
 		vertices.push_back(v1.x);
 		vertices.push_back(v1.y);
 		vertices.push_back(v1.z);
-		vertices.push_back(float(cube[0].type));
+
+		vertices.push_back(c1.x);
+		vertices.push_back(c1.y);
+		vertices.push_back(c1.z);
 
 		ComputeMeshNormals(v1, v2, v3, normals);
 
 		vertices.push_back(v2.x);
 		vertices.push_back(v2.y);
 		vertices.push_back(v2.z);
-		vertices.push_back(float(cube[0].type));
+		
+		vertices.push_back(c2.x);
+		vertices.push_back(c2.y);
+		vertices.push_back(c2.z);
 
 		ComputeMeshNormals(v1, v2, v3, normals);
 
 		vertices.push_back(v3.x);
 		vertices.push_back(v3.y);
 		vertices.push_back(v3.z);
-		vertices.push_back(float(cube[0].type));
+		
+		vertices.push_back(c3.x);
+		vertices.push_back(c3.y);
+		vertices.push_back(c3.z);
 
 		ComputeMeshNormals(v1, v2, v3, normals);
 		

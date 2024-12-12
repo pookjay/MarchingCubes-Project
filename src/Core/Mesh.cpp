@@ -11,7 +11,6 @@
 #include "Core/World.h"
 #include "Core/MarchingCubes.h"
 
-
 Mesh::Mesh()
 {
 	glGenVertexArrays(1, &VAO);
@@ -61,10 +60,10 @@ void Mesh::ConstructMesh(GridPoint grid[], int gridSize)
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
 	glBindBuffer(GL_ARRAY_BUFFER, normal_VBO);
 	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
@@ -90,11 +89,15 @@ void Mesh::RenderMesh()
 	glm::mat4 pos(1.0f);
 	pos = glm::translate(pos, glm::vec3(0.0f, 0.0f, -10.0f));
 
+	glUniform3fv(glGetUniformLocation(MeshShader.GetID(), "lightPosition"), 1, glm::value_ptr(lightPos));
+
 	glUniformMatrix4fv(glGetUniformLocation(MeshShader.GetID(), "modelMatrix"), 1, GL_FALSE, glm::value_ptr(pos));
 	glUniformMatrix4fv(glGetUniformLocation(MeshShader.GetID(), "viewMatrix"), 1, GL_FALSE, glm::value_ptr(camera.viewSpace));
 	glUniformMatrix4fv(glGetUniformLocation(MeshShader.GetID(), "perspectiveMatrix"), 1, GL_FALSE, glm::value_ptr(Utility::perspective));
 
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDrawArrays(GL_TRIANGLES, 0, vertexSize / 3);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	glBindVertexArray(0);
 }
